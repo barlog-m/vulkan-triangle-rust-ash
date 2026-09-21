@@ -1,0 +1,28 @@
+[package]
+name = "vulkan-triangle-rust-ash"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+log = "0.4"
+env_logger = "0.11"
+
+winit = { version = "0.30", features = ["rwh_06"] }
+
+ash = { git = "https://github.com/ash-rs/ash", rev = "f4c2ca3e4f6b998d5254ad101a32f024d87cdec2", default-features = false, features = ["linked", "debug", "std", "provisional"] }
+ash-window = { git = "https://github.com/ash-rs/ash", rev = "f4c2ca3e4f6b998d5254ad101a32f024d87cdec2" }
+vk-mem = { path = "vendor/vk-mem" }
+
+glam = "0.33"
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1
+opt-level = 3
+panic = 'abort'

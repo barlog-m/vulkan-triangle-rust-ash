@@ -1,0 +1,8 @@
+.vscode/
+.DS_Store
+.idea/
+
+Cargo.lock
+target/
+
+*.spv
