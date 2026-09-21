@@ -17,3 +17,7 @@ The example uses [Ash](https://github.com/ash-rs/ash) from git, not a release, b
 Also, this example bundles the [vk-mem](https://github.com/gwihlidal/vk-mem-rs) crate source code, because it had to be modified to work with Ash from git.
 
 AI was used to make this code exists, but good luck to write same code only with AI.
+
+To make this example work you have to compile that lonely shader by executing `compile.sh` or `compile.ps1` inside `shaders` folder.
+
+You also need to have the [Vulkan SDK](https://www.vulkan.org) and [Rust](https://rust-lang.org) installed.
