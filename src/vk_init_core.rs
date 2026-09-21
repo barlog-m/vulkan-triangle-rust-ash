@@ -87,10 +87,7 @@ pub fn vk_create_instance(entry: &ash::Entry, display_handle: &RawDisplayHandle)
         .enabled_extension_names(&extension_names)
         .flags(create_flags);
 
-    let instance = unsafe {
-        entry
-            .create_instance(&create_info, None)
-    }.expect("Instance creation error");
+    let instance = unsafe { entry.create_instance(&create_info, None) }.expect("Instance creation error");
 
     instance
 }
@@ -147,7 +144,6 @@ fn vk_is_physical_device_suitable(instance: &ash::Instance, physical_device: &vk
     unsafe { instance.get_physical_device_features2(*physical_device, &mut device_features2) };
 
     device_properties2.properties.api_version >= vk::API_VERSION_1_4
-        && device_properties2.properties.device_type == vk::PhysicalDeviceType::DISCRETE_GPU
         && device_features2.features.geometry_shader == vk::TRUE
         && device_features2.features.sampler_anisotropy == vk::TRUE
         && vulkan11_features.shader_draw_parameters == vk::TRUE
@@ -160,6 +156,17 @@ fn vk_is_physical_device_suitable(instance: &ash::Instance, physical_device: &vk
         && unified_layouts_features.unified_image_layouts == vk::TRUE
         && mesh_shader_features.task_shader == vk::TRUE
         && mesh_shader_features.mesh_shader == vk::TRUE
+}
+
+fn vk_physical_device_type_score(instance: &ash::Instance, physical_device: &vk::PhysicalDevice) -> u32 {
+    let properties = unsafe { instance.get_physical_device_properties(*physical_device) };
+    match properties.device_type {
+        vk::PhysicalDeviceType::DISCRETE_GPU => 400,
+        vk::PhysicalDeviceType::INTEGRATED_GPU => 300,
+        vk::PhysicalDeviceType::VIRTUAL_GPU => 200,
+        vk::PhysicalDeviceType::CPU => 100,
+        _ => 0,
+    }
 }
 
 fn vk_is_physical_device_has_graphics_and_present_family(
@@ -189,10 +196,19 @@ pub fn vk_pick_physical_device(
     let physical_device = *physical_devices
         .iter()
         .filter(|physical_device| vk_is_physical_device_suitable(instance, *physical_device))
-        .find(|physical_device| {
+        .filter(|physical_device| {
             vk_is_physical_device_has_graphics_and_present_family(instance, surface_loader, *physical_device, surface)
         })
+        .max_by_key(|physical_device| vk_physical_device_type_score(instance, *physical_device))
         .expect("Couldn't find suitable device");
+
+    let device_properties = unsafe { instance.get_physical_device_properties(physical_device) };
+    let device_name = unsafe { std::ffi::CStr::from_ptr(device_properties.device_name.as_ptr()) };
+    println!(
+        "Selected physical device: {} ({:?})",
+        device_name.to_str().unwrap_or("<invalid UTF-8>"),
+        device_properties.device_type
+    );
 
     let msaa_samples = vk_get_max_usable_sample_count(&instance, &physical_device);
     let queue_family_indices = vk_find_best_queue_families(&instance, &surface_loader, &physical_device, &surface);
