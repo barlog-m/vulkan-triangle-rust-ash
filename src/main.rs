@@ -23,7 +23,7 @@ use crate::logger::logger_init;
 use crate::mesh::Mesh;
 use crate::rndr::Rndr;
 
-const APP_NAME: &str = "Ash Triangle";
+const APP_NAME: &str = "Vulkan Triangle in Rust and Ash";
 
 struct AppWindow {
     pub width: AtomicU32,

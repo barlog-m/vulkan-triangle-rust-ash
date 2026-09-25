@@ -24,6 +24,6 @@ pub fn logger_init() {
                 writeln!(buf, "{style}{level:<5}{style:#} {}", record.args())
             }
         })
-        .filter_level(log::LevelFilter::Trace)
+        .filter_level(log::LevelFilter::Debug)
         .init();
 }
