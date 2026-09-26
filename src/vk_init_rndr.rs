@@ -195,7 +195,7 @@ pub fn vk_create_graphics_pipeline(
     [vk::Viewport; 1],
     [vk::Rect2D; 1],
 ) {
-    let mut shader_file = Cursor::new(&include_bytes!("../shaders/slang.spv")[..]);
+    let mut shader_file = Cursor::new(&include_bytes!("../shaders/shader.spv")[..]);
 
     let shader_code = read_spv(&mut shader_file).expect("Failed to read shader spv file");
     let shader_info = vk::ShaderModuleCreateInfo::default().code(&shader_code);
