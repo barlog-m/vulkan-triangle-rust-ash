@@ -238,7 +238,7 @@ impl Rndr {
         }
     }
 
-    pub fn render_frame(&mut self, mesh: &Mesh) {
+    pub fn draw_frame(&mut self, mesh: &Mesh) {
         let width = APP_WINDOW.width.load(Ordering::Relaxed);
         let height = APP_WINDOW.height.load(Ordering::Relaxed);
         if width == 0 || height == 0 {
@@ -289,8 +289,7 @@ impl Rndr {
 
         self.record_command_buffer(command_buffer, image_index, mesh);
 
-        // Submit (synchronization2)
-        // With SubmitInfo2 the semaphore stage masks are provided per-semaphore.
+        // Submit
         let wait_semaphore_infos = [vk::SemaphoreSubmitInfo::default()
             .semaphore(present_complete_semaphore)
             .stage_mask(vk::PipelineStageFlags2::COLOR_ATTACHMENT_OUTPUT)];

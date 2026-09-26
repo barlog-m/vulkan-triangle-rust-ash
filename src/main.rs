@@ -130,7 +130,7 @@ impl ApplicationHandler for App {
 
     fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
         if let (Some(rndr), Some(mesh)) = (&mut self.rndr, &self.mesh) {
-            rndr.render_frame(mesh);
+            rndr.draw_frame(mesh);
         }
     }
 }
